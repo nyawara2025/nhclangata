@@ -6,7 +6,7 @@ const Login = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { login } = useAuth()
-  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
   const [apartmentId, setApartmentId] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -19,7 +19,7 @@ const Login = () => {
     setLoading(true)
 
     try {
-      await login(phone, apartmentId)
+      await login(email, apartmentId)
       navigate(from, { replace: true })
     } catch (err) {
       setError(err.message || 'Login failed. Please try again.')
@@ -91,13 +91,13 @@ const Login = () => {
               fontWeight: 500,
               color: '#374151'
             }}>
-              Phone Number
+              Email
             </label>
             <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+2547XXXXXXXX"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="your@email.com"
               required
               style={{
                 width: '100%',

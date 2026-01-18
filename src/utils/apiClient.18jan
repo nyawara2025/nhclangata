@@ -84,12 +84,12 @@ export const apiRequest = async (url, options = {}) => {
  * @param {string} apartmentId - Resident apartment ID
  * @returns {Promise<object>} - User data and auth token
  */
-export const loginResident = async (phone, apartmentId) => {
+export const loginResident = async (email, apartmentId) => {
   const response = await apiRequest(API_ENDPOINTS.residentLogin, {
     method: 'POST',
     body: JSON.stringify({ 
-      phone, 
-      identifier: apartmentId 
+      email, 
+      apartment_id: apartmentId 
     }),
   });
 
