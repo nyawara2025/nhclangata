@@ -16,7 +16,6 @@ import Settings from './pages/Settings'
 import BroadcastAdmin from './pages/BroadcastAdmin'
 import BroadcastsList from './pages/BroadcastsList'
 import MyInquiries from './pages/MyInquiries'
-import OurChildren from './pages/OurChildren'
 
 function App() {
   return (
@@ -75,11 +74,6 @@ function App() {
         <Route path="/my-inquiries" element={
           <ProtectedRoute>
             <MyInquiries />
-          </ProtectedRoute>
-        } />
-        <Route path="/our-children" element={
-          <ProtectedRoute>
-            <OurChildren />
           </ProtectedRoute>
         } />
       </Routes>

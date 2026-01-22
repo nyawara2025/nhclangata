@@ -78,7 +78,6 @@ const Home = () => {
             { label: 'Share Opinion', color: '#FEE2E2', textColor: '#DC2626', route: '/share-opinion', icon: '🗣️' },
             { label: 'Broadcasts', color: '#EDE9FE', textColor: '#7C3AED', route: '/broadcasts', icon: '📢', badge: unreadBroadcasts },
             { label: 'Updates', color: '#FEF3C7', textColor: '#D97706', route: '/announcements', icon: '📰' },
-            { label: 'Our Children', color: '#FCE7F3', textColor: '#DB2777', route: '/our-children', icon: '👶' },
           ].map((action) => (
             <button
               key={action.label}
