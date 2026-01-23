@@ -22,7 +22,7 @@ const OurChildren = () => {
       icon: "🎉",
       color: "#FEF3C7",
       textColor: "#D97706",
-      route: "/our-children/holiday"
+      route: "/fun-day/events/upcoming"
     },
     {
       id: "transport",
@@ -40,7 +40,7 @@ const OurChildren = () => {
       {/* Header Section */}
       <section style={{ marginBottom: "24px" }}>
         <h1 style={{ margin: "0 0 8px", fontSize: "1.5rem", color: "#1e293b" }}>
-          Our Children 👶
+          Our Chldren 👶
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.9rem" }}>
           Manage and track your children's activities and services within the community

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom"
 import { isVendorLoggedIn, getStoredVendor, logoutVendor } from "../utils/apiClient"
 
-const VendorLayout = ({ children }) => {
+const VendorLayout = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [vendor, setVendor] = useState(null)
@@ -326,7 +326,7 @@ const VendorLayout = ({ children }) => {
 
         {/* Page Content */}
         <div style={{ padding: "24px 20px" }}>
-          {children}
+          <Outlet />
         </div>
       </main>
 
