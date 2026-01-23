@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 const Login = () => {
@@ -156,23 +156,6 @@ const Login = () => {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-
-        <div style={{ marginTop: '24px', textAlign: 'center' }}>
-          <p style={{ margin: '0 0 8px', color: '#64748b', fontSize: '0.875rem' }}>
-            Are you a vendor?
-          </p>
-          <Link 
-            to="/fun-day/vendor/login"
-            style={{
-              color: '#0891B2',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              textDecoration: 'none'
-            }}
-          >
-            Access Vendor Portal →
-          </Link>
-        </div>
       </div>
 
       <p style={{

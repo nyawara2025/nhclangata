@@ -551,7 +551,7 @@ export const registerVendor = async (vendorData) => {
 /**
  * Login vendor
  * @param {object} credentials - Email and password
- * @returns {Promise<object>} - Login response with vendor data
+ * @returns {Promise<object>} - Login response with token and vendor data
  */
 export const loginVendor = async (credentials) => {
   const response = await apiRequest(API_ENDPOINTS.fundayVendorLogin, {
@@ -559,19 +559,16 @@ export const loginVendor = async (credentials) => {
     body: JSON.stringify(credentials),
   });
 
-  // Check for success flag or token (support both response formats)
-  if (!response || (response.success !== true && !response.token)) {
+  if (!response || !response.token) {
     throw new Error(response?.error || "Login failed");
   }
 
   // Store vendor auth data
-  // Use vendor_id or id from response
-  const vendorId = response.vendor_id || response.id;
-  localStorage.setItem(VENDOR_STORAGE_KEYS.VENDOR_TOKEN, response.token || "vendor_authenticated");
+  localStorage.setItem(VENDOR_STORAGE_KEYS.VENDOR_TOKEN, response.token);
   localStorage.setItem(
     VENDOR_STORAGE_KEYS.VENDOR_DATA,
     JSON.stringify({
-      id: vendorId,
+      id: response.vendor_id,
       company_name: response.company_name,
       email: response.email,
     })

@@ -16,6 +16,16 @@ import Settings from './pages/Settings'
 import BroadcastAdmin from './pages/BroadcastAdmin'
 import BroadcastsList from './pages/BroadcastsList'
 import MyInquiries from './pages/MyInquiries'
+import OurChildren from './pages/OurChildren'
+import VendorLayout from './layouts/VendorLayout'
+import VendorLogin from './pages/fun-day/vendor/VendorLogin'
+import VendorRegister from './pages/fun-day/vendor/VendorRegister'
+import VendorDashboard from './pages/fun-day/vendor/VendorDashboard'
+import EventForm from './pages/fun-day/vendor/EventForm'
+import EventBookings from './pages/fun-day/vendor/EventBookings'
+import EventListing from './pages/fun-day/parent/EventListing'
+import EventDetails from './pages/fun-day/parent/EventDetails'
+import ParentBookings from './pages/fun-day/parent/ParentBookings'
 
 function App() {
   return (
@@ -74,6 +84,56 @@ function App() {
         <Route path="/my-inquiries" element={
           <ProtectedRoute>
             <MyInquiries />
+          </ProtectedRoute>
+        } />
+        <Route path="/our-children" element={
+          <ProtectedRoute>
+            <OurChildren />
+          </ProtectedRoute>
+        } />
+        <Route path="/fun-day" element={
+          <ProtectedRoute>
+            <EventListing />
+          </ProtectedRoute>
+        } />
+        <Route path="/fun-day/:id" element={
+          <ProtectedRoute>
+            <EventDetails />
+          </ProtectedRoute>
+        } />
+        <Route path="/fun-day/bookings" element={
+          <ProtectedRoute>
+            <ParentBookings />
+          </ProtectedRoute>
+        } />
+        <Route path="/vendor/login" element={<VendorLayout><VendorLogin /></VendorLayout>} />
+        <Route path="/vendor/register" element={<VendorLayout><VendorRegister /></VendorLayout>} />
+        <Route path="/vendor/dashboard" element={
+          <ProtectedRoute>
+            <VendorLayout>
+              <VendorDashboard />
+            </VendorLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/vendor/events/new" element={
+          <ProtectedRoute>
+            <VendorLayout>
+              <EventForm />
+            </VendorLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/vendor/events/:id/edit" element={
+          <ProtectedRoute>
+            <VendorLayout>
+              <EventForm />
+            </VendorLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/vendor/events/:id/bookings" element={
+          <ProtectedRoute>
+            <VendorLayout>
+              <EventBookings />
+            </VendorLayout>
           </ProtectedRoute>
         } />
       </Routes>

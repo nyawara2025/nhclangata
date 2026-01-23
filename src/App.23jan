@@ -17,15 +17,6 @@ import BroadcastAdmin from './pages/BroadcastAdmin'
 import BroadcastsList from './pages/BroadcastsList'
 import MyInquiries from './pages/MyInquiries'
 import OurChildren from './pages/OurChildren'
-import VendorLayout from './layouts/VendorLayout'
-import VendorLogin from './pages/fun-day/vendor/VendorLogin'
-import VendorRegister from './pages/fun-day/vendor/VendorRegister'
-import VendorDashboard from './pages/fun-day/vendor/VendorDashboard'
-import EventForm from './pages/fun-day/vendor/EventForm'
-import EventBookings from './pages/fun-day/vendor/EventBookings'
-import EventListing from './pages/fun-day/parent/EventListing'
-import EventDetails from './pages/fun-day/parent/EventDetails'
-import ParentBookings from './pages/fun-day/parent/ParentBookings'
 
 function App() {
   return (
@@ -90,43 +81,6 @@ function App() {
           <ProtectedRoute>
             <OurChildren />
           </ProtectedRoute>
-        } />
-        <Route path="/fun-day" element={
-          <ProtectedRoute>
-            <EventListing />
-          </ProtectedRoute>
-        } />
-        <Route path="/fun-day/:id" element={
-          <ProtectedRoute>
-            <EventDetails />
-          </ProtectedRoute>
-        } />
-        <Route path="/fun-day/bookings" element={
-          <ProtectedRoute>
-            <ParentBookings />
-          </ProtectedRoute>
-        } />
-        <Route path="/fun-day/vendor/login" element={<VendorLogin />} />
-        <Route path="/fun-day/vendor/register" element={<VendorRegister />} />
-        <Route path="/fun-day/vendor/dashboard" element={
-          <VendorLayout>
-            <VendorDashboard />
-          </VendorLayout>
-        } />
-        <Route path="/fun-day/vendor/events/new" element={
-          <VendorLayout>
-            <EventForm />
-          </VendorLayout>
-        } />
-        <Route path="/fun-day/vendor/events/:id/edit" element={
-          <VendorLayout>
-            <EventForm />
-          </VendorLayout>
-        } />
-        <Route path="/fun-day/vendor/events/:id/bookings" element={
-          <VendorLayout>
-            <EventBookings />
-          </VendorLayout>
         } />
       </Routes>
     </AuthProvider>

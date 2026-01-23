@@ -5,31 +5,31 @@
 // In production, set VITE_N8N_WEBHOOK_URL in your .env file
 const getBaseUrl = () => {
   // Your n8n instance base URL
-  return import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n.tenear.com/webhook';
+  return import.meta.env.VITE_N8N_WEBHOOK_URL || "https://n8n.tenear.com/webhook";
 };
 
 // API Endpoints
 export const API_ENDPOINTS = {
   // Authentication
   residentLogin: `${getBaseUrl()}/nhc-login`,
-  
+
   // Resident Operations
   getResidents: `${getBaseUrl()}/nhc-residents`,
   updateResident: `${getBaseUrl()}/nhc-update-resident`,
-  
+
   // Vacant Houses Operations
   getVacantHouses: `${getBaseUrl()}/nhc-vacant-houses`,
-  
+
   // Complaint/Issue Operations
   submitComplaint: `${getBaseUrl()}/nhc-submit-complaint`,
   getComplaints: `${getBaseUrl()}/nhc-complaints`,
-  
-  // Payment Operations  
+
+  // Payment Operations
   getPaymentHistory: `${getBaseUrl()}/nhc-payment-history`,
   initiateSTKPush: `${getBaseUrl()}/nhc-stk-push`,
   checkPaymentStatus: `${getBaseUrl()}/nhc-payment-status`,
   recordPayment: `${getBaseUrl()}/nhc-record-payment`,
-  
+
   // Announcement Operations
   getAnnouncements: `${getBaseUrl()}/nhc-announcements`,
 
@@ -57,32 +57,67 @@ export const API_ENDPOINTS = {
   getInquiryResponses: `${getBaseUrl()}/nhc-get-inquiry-responses`,
   getCustomerConversations: `${getBaseUrl()}/nhc-customer-conversations`,
   markResponseRead: `${getBaseUrl()}/nhc-mark-response-read`,
+
+  // ============================================
+  // Holiday/Weekend Fun Day Operations
+  // ============================================
+
+  // Vendor Authentication
+  fundayVendorRegister: `${getBaseUrl()}/vendor/fun-day/register`,
+  fundayVendorLogin: `${getBaseUrl()}/vendor/fun-day/login`,
+
+  // Vendor Event Management
+  fundayCreateEvent: `${getBaseUrl()}/vendor/fun-day/events/create`,
+  fundayGetVendorEvents: `${getBaseUrl()}/vendor/fun-day/events`,
+  fundayUpdateEventStatus: `${getBaseUrl()}/vendor/fun-day/events/status`,
+  fundayGetEventBookings: `${getBaseUrl()}/vendor/fun-day/events`,
+  fundayGetVendorStats: `${getBaseUrl()}/vendor/fun-day/stats`,
+
+  // Parent Event Operations
+  fundayGetUpcomingEvents: `${getBaseUrl()}/fun-day/events/upcoming`,
+  fundayGetEventDetails: `${getBaseUrl()}/fun-day/events`,
+  fundayBookEvent: `${getBaseUrl()}/fun-day/events`,
+  fundayGetMyRegistrations: `${getBaseUrl()}/fun-day/my-registrations`,
+  fundayCancelRegistration: `${getBaseUrl()}/fun-day/cancel-registration`,
 };
 
 // Webhook paths (for reference)
 export const WEBHOOK_PATHS = {
-  residentLogin: 'nhc-login',
-  getResidents: 'nhc-residents',
-  updateResident: 'nhc-update-resident',
-  getVacantHouses: 'nhc-vacant-houses',
-  submitComplaint: 'nhc-submit-complaint',
-  getComplaints: 'nhc-complaints',
-  getPaymentHistory: 'nhc-payment-history',
-  initiateSTKPush: 'nhc-stk-push',
-  checkPaymentStatus: 'nhc-payment-status',
-  recordPayment: 'nhc-record-payment',
-  getAnnouncements: 'nhc-announcements',
-  paymentCallback: 'nhc-payment-callback',
-  getActiveShops: 'nhc-active-shops',
-  getBroadcasts: 'nhc-broadcasts',
-  createBroadcast: 'nhc-create-broadcast',
-  markBroadcastRead: 'nhc-broadcast-read',
-  getPhases: 'nhc-phases',
-  getBlocks: 'nhc-blocks',
+  residentLogin: "nhc-login",
+  getResidents: "nhc-residents",
+  updateResident: "nhc-update-resident",
+  getVacantHouses: "nhc-vacant-houses",
+  submitComplaint: "nhc-submit-complaint",
+  getComplaints: "nhc-complaints",
+  getPaymentHistory: "nhc-payment-history",
+  initiateSTKPush: "nhc-stk-push",
+  checkPaymentStatus: "nhc-payment-status",
+  recordPayment: "nhc-record-payment",
+  getAnnouncements: "nhc-announcements",
+  paymentCallback: "nhc-payment-callback",
+  getActiveShops: "nhc-active-shops",
+  getBroadcasts: "nhc-broadcasts",
+  createBroadcast: "nhc-create-broadcast",
+  markBroadcastRead: "nhc-broadcast-read",
+  getPhases: "nhc-phases",
+  getBlocks: "nhc-blocks",
   // Inquiry Response Operations
-  getInquiryResponses: 'nhc-get-inquiry-responses',
-  getCustomerConversations: 'nhc-customer-conversations',
-  markResponseRead: 'nhc-mark-response-read',
+  getInquiryResponses: "nhc-get-inquiry-responses",
+  getCustomerConversations: "nhc-customer-conversations",
+  markResponseRead: "nhc-mark-response-read",
+  // Fun Day Operations
+  fundayVendorRegister: "vendor/fun-day/register",
+  fundayVendorLogin: "vendor/fun-day/login",
+  fundayCreateEvent: "vendor/fun-day/events/create",
+  fundayGetVendorEvents: "vendor/fun-day/events",
+  fundayUpdateEventStatus: "vendor/fun-day/events/status",
+  fundayGetEventBookings: "vendor/fun-day/events",
+  fundayGetVendorStats: "vendor/fun-day/stats",
+  fundayGetUpcomingEvents: "fun-day/events/upcoming",
+  fundayGetEventDetails: "fun-day/events",
+  fundayBookEvent: "fun-day/events",
+  fundayGetMyRegistrations: "fun-day/my-registrations",
+  fundayCancelRegistration: "fun-day/cancel-registration",
 };
 
 // M-Pesa Configuration
@@ -95,29 +130,29 @@ export const WEBHOOK_PATHS = {
 
 export const MPESA_CONFIG = {
   // Daraja API credentials - Add to .env file when available
-  consumerKey: import.meta.env.VITE_MPESA_CONSUMER_KEY || '',
-  consumerSecret: import.meta.env.VITE_MPESA_CONSUMER_SECRET || '',
-  passkey: import.meta.env.VITE_MPESA_PASSKEY || '',
-  
+  consumerKey: import.meta.env.VITE_MPESA_CONSUMER_KEY || "",
+  consumerSecret: import.meta.env.VITE_MPESA_CONSUMER_SECRET || "",
+  passkey: import.meta.env.VITE_MPESA_PASSKEY || "",
+
   // Paybill details
-  paybillNumber: 'NHC Welfare',
-  shortcode: import.meta.env.VITE_MPESA_SHORTCODE || '000000',
-  
+  paybillNumber: "NHC Welfare",
+  shortcode: import.meta.env.VITE_MPESA_SHORTCODE || "000000",
+
   // Environment - 'sandbox' or 'production'
-  environment: import.meta.env.VITE_MPESA_ENV || 'sandbox',
-  
+  environment: import.meta.env.VITE_MPESA_ENV || "sandbox",
+
   // Callback URL for payment confirmations
   callbackUrl: `${getBaseUrl()}/nhc-payment-callback`,
-  
+
   // Default payment amount
   defaultAmount: 200,
 };
 
 // M-Pesa API Endpoints (Daraja)
 export const MPESA_ENDPOINTS = {
-  accessToken: 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
-  stkPush: 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
-  stkQuery: 'https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query',
+  accessToken: "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
+  stkPush: "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
+  stkQuery: "https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query",
 };
 
 export default {
@@ -125,5 +160,5 @@ export default {
   WEBHOOK_PATHS,
   MPESA_CONFIG,
   MPESA_ENDPOINTS,
-  getBaseUrl
+  getBaseUrl,
 };
