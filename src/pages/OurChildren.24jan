@@ -1,7 +1,7 @@
 import React from "react"
 import { useNavigate } from "react-router-dom"
 
-const OurChildren = ( { children } ) => {
+const OurChildren = () => {
   const navigate = useNavigate()
 
   // Define the children activity options
@@ -22,7 +22,7 @@ const OurChildren = ( { children } ) => {
       icon: "🎉",
       color: "#FEF3C7",
       textColor: "#D97706",
-      route: "/fun-day"
+      route: "/fun-day/events/upcoming"
     },
     {
       id: "transport",
