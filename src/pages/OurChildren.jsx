@@ -31,7 +31,7 @@ const OurChildren = ( { children } ) => {
       icon: "🚌",
       color: "#DBEAFE",
       textColor: "#2563EB",
-      route: "/our-children/transport"
+      route: "/school-transport"
     }
   ]
 

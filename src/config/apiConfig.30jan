@@ -76,27 +76,9 @@ export const API_ENDPOINTS = {
   // Parent Event Operations
   fundayGetUpcomingEvents: `${getBaseUrl()}/fun-day/events/upcoming`,
   fundayGetEventDetails: `${getBaseUrl()}/fun-day/event-details`,
-  fundayBookEvent: `${getBaseUrl()}/fun-day/events`,
-  fundayGetMyRegistrations: `${getBaseUrl()}/fun-day/my-registrations`,
+  fundayBookEvent: `${getBaseUrl()}/fun-day/events/:id/register`,
+  fundayGetMyRegistrations: `${getBaseUrl()}/fun-day/events/:id/my-registrations`,
   fundayCancelRegistration: `${getBaseUrl()}/fun-day/cancel-registration`,
-
-  // ============================================
-  // School Transport Operations
-  // ============================================
-
-  // Parent Operations
-  schoolTransportGetAssignment: `${getBaseUrl()}/school-transport/my-assignment`,
-  schoolTransportGetTracking: `${getBaseUrl()}/school-transport/tracking-history`,
-  schoolTransportGetDelays: `${getBaseUrl()}/school-transport/delays`,
-
-  // Driver/Vendor Operations
-  schoolTransportDriverLogin: `${getBaseUrl()}/school-transport/driver/login`,
-  schoolTransportStartMorning: `${getBaseUrl()}/school-transport/driver/start-morning`,
-  schoolTransportStartAfternoon: `${getBaseUrl()}/school-transport/driver/start-afternoon`,
-  schoolTransportConfirmPickup: `${getBaseUrl()}/school-transport/driver/confirm-pickup`,
-  schoolTransportConfirmDropoff: `${getBaseUrl()}/school-transport/driver/confirm-dropoff`,
-  schoolTransportReportDelay: `${getBaseUrl()}/school-transport/driver/report-delay`,
-  schoolTransportGetSchedule: `${getBaseUrl()}/school-transport/driver/schedule`,
 };
 
 // Webhook paths (for reference)
@@ -132,21 +114,10 @@ export const WEBHOOK_PATHS = {
   fundayGetEventBookings: "vendor/fun-day/events",
   fundayGetVendorStats: "vendor/fun-day/stats",
   fundayGetUpcomingEvents: "fun-day/events/upcoming",
-  fundayGetEventDetails: "fun-day/event-details",
+  fundayGetEventDetails: "fun-day/events",
   fundayBookEvent: "fun-day/events",
   fundayGetMyRegistrations: "fun-day/my-registrations",
   fundayCancelRegistration: "fun-day/cancel-registration",
-  // School Transport Operations
-  schoolTransportGetAssignment: "school-transport/my-assignment",
-  schoolTransportGetTracking: "school-transport/tracking-history",
-  schoolTransportGetDelays: "school-transport/delays",
-  schoolTransportDriverLogin: "school-transport/driver/login",
-  schoolTransportStartMorning: "school-transport/driver/start-morning",
-  schoolTransportStartAfternoon: "school-transport/driver/start-afternoon",
-  schoolTransportConfirmPickup: "school-transport/driver/confirm-pickup",
-  schoolTransportConfirmDropoff: "school-transport/driver/confirm-dropoff",
-  schoolTransportReportDelay: "school-transport/driver/report-delay",
-  schoolTransportGetSchedule: "school-transport/driver/schedule",
 };
 
 // M-Pesa Configuration

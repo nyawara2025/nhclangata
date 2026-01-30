@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
@@ -26,7 +26,6 @@ import EventBookings from './pages/fun-day/vendor/EventBookings'
 import EventListing from './pages/fun-day/parent/EventListing'
 import EventDetails from './pages/fun-day/parent/EventDetails'
 import ParentBookings from './pages/fun-day/parent/ParentBookings'
-import SchoolTransport from './pages/school-transport/SchoolTransport'
 
 function App() {
   return (
@@ -97,7 +96,7 @@ function App() {
             <EventListing />
           </ProtectedRoute>
         } />
-        <Route path="/fun-day/events/:id" element={
+        <Route path="/fun-day/:id" element={
           <ProtectedRoute>
             <EventDetails />
           </ProtectedRoute>
@@ -105,12 +104,6 @@ function App() {
         <Route path="/fun-day/bookings" element={
           <ProtectedRoute>
             <ParentBookings />
-          </ProtectedRoute>
-        } />
-        <Route path="/fun-day/my-registrations" element={<Navigate to="/fun-day/bookings" replace />} />
-        <Route path="/school-transport" element={
-          <ProtectedRoute>
-            <SchoolTransport />
           </ProtectedRoute>
         } />
         <Route path="/fun-day/vendor/login" element={<VendorLogin />} />

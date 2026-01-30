@@ -173,7 +173,7 @@ const EventDetails = () => {
 
         <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
           <Link
-            to="/fun-day/bookings"
+            to="/fun-day/my-registrations"
             style={{
               padding: "12px 24px",
               backgroundColor: "#0891b2",

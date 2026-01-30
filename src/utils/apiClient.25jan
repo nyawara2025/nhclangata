@@ -709,6 +709,8 @@ export const getVendorStats = async () => {
 
 /**
  * Get all upcoming active events
+ * @param {object} filters - Optional filters (date, age_group, etc.)
+ * @returns {Promise<Array>} - Array of upcoming events
  */
 export const getUpcomingEvents = async (filters = {}) => {
   const response = await apiRequest(API_ENDPOINTS.fundayGetUpcomingEvents, {
@@ -730,39 +732,60 @@ export const getUpcomingEvents = async (filters = {}) => {
 
 /**
  * Get event details by ID
+ * @param {string} eventId - Event UUID
+ * @returns {Promise<object>} - Event details
  */
 export const getEventDetails = async (eventId) => {
-  const url = API_ENDPOINTS.fundayGetEventDetails;
-
-  return await apiRequest(url, {
-    method: "POST",
-    body: JSON.stringify({ event_id: eventId }),
-    headers: getParentHeader(),
-  });
+  const response = await apiRequest(
+    `${API_ENDPOINTS.fundayGetEventDetails}/${eventId}`,
+    {
+      method: "GET",
+      headers: getParentHeader(),
+    }
+  );
 
   if (!response || typeof response !== "object") {
     throw new Error("Invalid response from server");
   }
 
   return response;
-}; // Added missing closing brace
+};
 
 /**
  * Book/register for an event
+ * @param {string} eventId - Event UUID
+ * @param {object} bookingData - Booking details (child name, age, etc.)
+ * @returns {Promise<object>} - Booking response
  */
 export const bookEvent = async (eventId, bookingData) => {
-  // Fixed typo: API_ENDPOINT -> API_ENDPOINTS
-  const url = API_ENDPOINTS.fundayBookEvent.replace(':id', eventId);
+  const residentId = getStoredResidentId();
+  if (!residentId) {
+    throw new Error("User not logged in");
+  }
 
-  return await apiRequest(url, {
-    method: "POST",
-    body: JSON.stringify(bookingData),
-    headers: getParentHeader(), // Added for consistency
-  });
-}; // Added missing closing brace
+  const response = await apiRequest(
+    `${API_ENDPOINTS.fundayBookEvent}/${eventId}/book`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        event_id: eventId,
+        parent_user_id: parseInt(residentId),
+        ...bookingData,
+      }),
+      headers: getParentHeader(),
+    }
+  );
+
+  if (!response || response.success === false) {
+    throw new Error(response?.error || "Failed to book event");
+  }
+
+  return response;
+};
 
 /**
  * Get parent's event registrations
+ * @returns {Promise<Array>} - Array of registrations
  */
 export const getMyRegistrations = async () => {
   const residentId = getStoredResidentId();
@@ -786,7 +809,6 @@ export const getMyRegistrations = async () => {
 
   return response.registrations || response.data || [];
 };
-
 
 /**
  * Cancel a registration
