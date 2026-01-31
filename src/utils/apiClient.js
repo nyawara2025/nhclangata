@@ -803,6 +803,22 @@ export const cancelRegistration = async (registrationId) => {
   return response;
 };
 
+/**
+ * Get school transport assignment for a resident
+ */
+export const getSchoolTransportData = async () => {
+  const residentId = getStoredResidentId();
+  if (!residentId) throw new Error("User not logged in");
+
+  // Corrected the key name to match apiConfig.js
+  const url = API_ENDPOINTS.schoolTransportGetAssignment;
+
+  return await apiRequest(url, {
+    method: "POST",
+    body: JSON.stringify({ resident_id: residentId }),
+  });
+};
+
 export default {
   apiRequest,
   loginResident,

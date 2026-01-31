@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { getStoredUser, getStoredResidentId, getSchoolTransportData } from "../../utils/apiClient"
+import { getStoredUser, getStoredResidentId } from "../../utils/apiClient"
 
 const SchoolTransport = () => {
   const navigate = useNavigate()
@@ -18,28 +18,125 @@ const SchoolTransport = () => {
 
   const loadTransportData = async () => {
     try {
-      setLoading(true);
-      setError("");
-
-      // 1. Fetch real data from n8n
-      const data = await getSchoolTransportData();
-      
-      // 2. Map data to state
-      if (data && data.hasAssignment) {
-        setTransportData(data);
-      } else {
-        setTransportData({ hasAssignment: false });
+      setLoading(true)
+      // Simulated data - replace with actual API call
+      const mockData = {
+        hasAssignment: true,
+        vendor: {
+          company_name: "NHC Transport Services",
+          driver_name: "John Kamau",
+          driver_phone: "+254700000000",
+          vehicle_number: "KCJ 123X",
+          vehicle_type: "van",
+          route_name: "Route A - Phase 1"
+        },
+        assignment: {
+          child_name: "Emma Johnson",
+          grade: "Grade 4",
+          pickup_address: "House 45, Phase 1",
+          dropoff_school: "Nairobi Academy",
+          morning_pickup_time: "06:30 AM",
+          afternoon_dropoff_time: "03:30 PM"
+        },
+        morningTracking: [
+          {
+            step: "depart_home",
+            label: "Depart Home",
+            scheduled_time: "06:30 AM",
+            actual_time: "06:32 AM",
+            status: "completed",
+            gps_latitude: -1.286389,
+            gps_longitude: 36.817223,
+            is_manual: false
+          },
+          {
+            step: "arrive_school",
+            label: "Arrive School",
+            scheduled_time: "07:15 AM",
+            actual_time: "07:12 AM",
+            status: "completed",
+            gps_latitude: -1.2921,
+            gps_longitude: 36.8219,
+            is_manual: false
+          },
+          {
+            step: "depart_school",
+            label: "Depart School",
+            scheduled_time: "03:00 PM",
+            actual_time: null,
+            status: "pending",
+            gps_latitude: null,
+            gps_longitude: null,
+            is_manual: false
+          },
+          {
+            step: "arrive_home",
+            label: "Arrive Home",
+            scheduled_time: "04:00 PM",
+            actual_time: null,
+            status: "pending",
+            gps_latitude: null,
+            gps_longitude: null,
+            is_manual: false
+          }
+        ],
+        afternoonTracking: [
+          {
+            step: "depart_home",
+            label: "Depart Home",
+            scheduled_time: "06:30 AM",
+            actual_time: "06:28 AM",
+            status: "completed",
+            gps_latitude: -1.286389,
+            gps_longitude: 36.817223,
+            is_manual: false
+          },
+          {
+            step: "arrive_school",
+            label: "Arrive School",
+            scheduled_time: "07:15 AM",
+            actual_time: "07:10 AM",
+            status: "completed",
+            gps_latitude: -1.2921,
+            gps_longitude: 36.8219,
+            is_manual: false
+          },
+          {
+            step: "depart_school",
+            label: "Depart School",
+            scheduled_time: "03:00 PM",
+            actual_time: "03:05 PM",
+            status: "completed",
+            gps_latitude: -1.2921,
+            gps_longitude: 36.8219,
+            is_manual: false
+          },
+          {
+            step: "arrive_home",
+            label: "Arrive Home",
+            scheduled_time: "04:00 PM",
+            actual_time: null,
+            status: "pending",
+            gps_latitude: null,
+            gps_longitude: null,
+            is_manual: false
+          }
+        ],
+        delays: [],
+        lastUpdated: new Date().toISOString()
       }
+      setTransportData(mockData)
     } catch (err) {
-      console.error("Transport Load Error:", err);
-      setError(err.message || "Failed to load transport details");
+      setError(err.message || "Failed to load transport details")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }; // This is the ONLY closing bracket needed for the function
-    
+  }
 
-
+  const formatTime = (timeStr) => {
+    if (!timeStr) return "--:--"
+    return timeStr
+  }
 
   const getStepStatus = (step, trackingData) => {
     const stepIndex = ["depart_home", "arrive_school", "depart_school", "arrive_home"].indexOf(step)
