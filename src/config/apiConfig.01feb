@@ -91,10 +91,12 @@ export const API_ENDPOINTS = {
 
   // Driver/Vendor Operations
   schoolTransportDriverLogin: `${getBaseUrl()}/school-transport/driver/login`,
-  schoolTransportDriverDashboard: `${getBaseUrl()}/school-transport/driver/dashboard`,
-  schoolTransportUpdateTripStatus: `${getBaseUrl()}/school-transport/driver/trip-status`,
-  schoolTransportUpdateStudentAttendance: `${getBaseUrl()}/school-transport/driver/student-attendance`,
-  schoolTransportReportIssue: `${getBaseUrl()}/school-transport/driver/report-issue`,
+  schoolTransportStartMorning: `${getBaseUrl()}/school-transport/driver/start-morning`,
+  schoolTransportStartAfternoon: `${getBaseUrl()}/school-transport/driver/start-afternoon`,
+  schoolTransportConfirmPickup: `${getBaseUrl()}/school-transport/driver/confirm-pickup`,
+  schoolTransportConfirmDropoff: `${getBaseUrl()}/school-transport/driver/confirm-dropoff`,
+  schoolTransportReportDelay: `${getBaseUrl()}/school-transport/driver/report-delay`,
+  schoolTransportGetSchedule: `${getBaseUrl()}/school-transport/driver/schedule`,
 };
 
 // Webhook paths (for reference)
@@ -139,10 +141,12 @@ export const WEBHOOK_PATHS = {
   schoolTransportGetTracking: "school-transport/tracking-history",
   schoolTransportGetDelays: "school-transport/delays",
   schoolTransportDriverLogin: "school-transport/driver/login",
-  schoolTransportDriverDashboard: "school-transport/driver/dashboard",
-  schoolTransportUpdateTripStatus: "school-transport/driver/trip-status",
-  schoolTransportUpdateStudentAttendance: "school-transport/driver/student-attendance",
-  schoolTransportReportIssue: "school-transport/driver/report-issue",
+  schoolTransportStartMorning: "school-transport/driver/start-morning",
+  schoolTransportStartAfternoon: "school-transport/driver/start-afternoon",
+  schoolTransportConfirmPickup: "school-transport/driver/confirm-pickup",
+  schoolTransportConfirmDropoff: "school-transport/driver/confirm-dropoff",
+  schoolTransportReportDelay: "school-transport/driver/report-delay",
+  schoolTransportGetSchedule: "school-transport/driver/schedule",
 };
 
 // M-Pesa Configuration

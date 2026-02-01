@@ -27,6 +27,9 @@ import EventListing from './pages/fun-day/parent/EventListing'
 import EventDetails from './pages/fun-day/parent/EventDetails'
 import ParentBookings from './pages/fun-day/parent/ParentBookings'
 import SchoolTransport from './pages/school-transport/SchoolTransport'
+import DriverLogin from './pages/school-transport/driver/DriverLogin'
+import DriverDashboard from './pages/school-transport/driver/DriverDashboard'
+import ActiveTrip from './pages/school-transport/driver/ActiveTrip'
 
 function App() {
   return (
@@ -113,6 +116,10 @@ function App() {
             <SchoolTransport />
           </ProtectedRoute>
         } />
+        {/* Transport Driver Routes */}
+        <Route path="/transport-driver/login" element={<DriverLogin />} />
+        <Route path="/transport-driver/dashboard" element={<DriverDashboard />} />
+        <Route path="/transport-driver/trip/:routeId" element={<ActiveTrip />} />
         <Route path="/fun-day/vendor/login" element={<VendorLogin />} />
         <Route path="/fun-day/vendor/register" element={<VendorRegister />} />
         <Route path="/fun-day/vendor/dashboard" element={

@@ -173,23 +173,6 @@ const Login = () => {
             Access Vendor Portal →
           </Link>
         </div>
-
-        <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #e5e7eb', textAlign: 'center' }}>
-          <p style={{ margin: '0 0 8px', color: '#64748b', fontSize: '0.875rem' }}>
-            Are you a transport driver?
-          </p>
-          <Link 
-            to="/transport-driver/login"
-            style={{
-              color: '#059669',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              textDecoration: 'none'
-            }}
-          >
-            Driver Login →
-          </Link>
-        </div>
       </div>
 
       <p style={{
