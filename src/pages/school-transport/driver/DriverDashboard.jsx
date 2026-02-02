@@ -35,8 +35,8 @@ const DriverDashboard = () => {
           date: new Date().toISOString().split("T")[0],
           stops: [
             { stop_id: "S1", stop_name: "Main Gate", stop_order: 1 },
-            { stop_id: "S2", stop_name: "House 45", stop_order: 2 },
-            { stop_id: "S3", stop_name: "House 78", stop_order: 3 },
+            { stop_id: "S2", stop_name: "Langata Mall", stop_order: 2 },
+            { stop_id: "S3", stop_name: "Langata Jnr Academy", stop_order: 3 },
           ],
         },
         {
@@ -51,7 +51,7 @@ const DriverDashboard = () => {
         },
       ]
       setRoutes(mockRoutes)
-      setDriverName("John Kamau")
+      setDriverName("Aquilla - Mama Rooney")
     } catch (err) {
       console.error("Failed to load routes:", err)
     } finally {
