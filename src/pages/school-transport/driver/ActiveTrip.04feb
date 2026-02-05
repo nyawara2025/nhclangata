@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect } from "react"
 import { useNavigate, useParams, useLocation, Link } from "react-router-dom"
 
 const ActiveTrip = () => {
@@ -11,7 +11,6 @@ const ActiveTrip = () => {
     vehicle: "KCJ 123X",
     start_time: "06:30 AM",
     student_count: 12,
-    trip_direction: "morning", // "morning" or "afternoon"
     stops: [
       {
         stop_id: "S1",
@@ -52,153 +51,9 @@ const ActiveTrip = () => {
   const [showIssueModal, setShowIssueModal] = useState(false)
   const [issueType, setIssueType] = useState("")
   const [issueNotes, setIssueNotes] = useState("")
-  
-  // GPS Tracking State
-  const [gpsStatus, setGpsStatus] = useState("off") // off, searching, active, error
-  const [currentLocation, setCurrentLocation] = useState(null)
-  const [locationError, setLocationError] = useState(null)
-  const [gpsAccuracy, setGpsAccuracy] = useState(null)
-  const [isSendingLocation, setIsSendingLocation] = useState(false)
-  const watchPositionRef = useRef(null)
-  const lastUpdateRef = useRef(Date.now())
-  const LOCATION_UPDATE_INTERVAL = 30000 // 30 seconds
 
   const currentStop = route.stops[currentStopIndex]
   const completedStops = route.stops.filter((_, index) => index < currentStopIndex)
-
-  // Initialize GPS tracking when trip starts
-  useEffect(() => {
-    if (tripStatus === "in_progress" && !watchPositionRef.current) {
-      startGpsTracking()
-    }
-
-    return () => {
-      if (watchPositionRef.current) {
-        navigator.geolocation.clearWatch(watchPositionRef.current)
-        watchPositionRef.current = null
-      }
-    }
-  }, [tripStatus])
-
-  const startGpsTracking = () => {
-    if (!navigator.geolocation) {
-      setGpsStatus("error")
-      setLocationError("GPS not supported on this device")
-      return
-    }
-
-    setGpsStatus("searching")
-
-    try {
-      watchPositionRef.current = navigator.geolocation.watchPosition(
-        (position) => {
-          const { latitude, longitude, accuracy } = position.coords
-          const locationData = {
-            lat: latitude,
-            lng: longitude,
-            accuracy: accuracy,
-            timestamp: new Date().toISOString(),
-          }
-
-          setCurrentLocation(locationData)
-          setGpsAccuracy(accuracy)
-          setGpsStatus("active")
-          setLocationError(null)
-
-          // Throttle location updates
-          const now = Date.now()
-          if (now - lastUpdateRef.current >= LOCATION_UPDATE_INTERVAL) {
-            sendLocationUpdate(locationData)
-            lastUpdateRef.current = now
-          }
-        },
-        (error) => {
-          console.error("GPS Error:", error)
-          setGpsStatus("error")
-          setLocationError(getGpsErrorMessage(error.code))
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 30000,
-        }
-      )
-    } catch (err) {
-      setGpsStatus("error")
-      setLocationError("Failed to start GPS tracking")
-    }
-  }
-
-  const getGpsErrorMessage = (code) => {
-    switch (code) {
-      case 1:
-        return "Location permission denied. Please enable GPS in settings."
-      case 2:
-        return "Location unavailable. Please try again."
-      case 3:
-        return "Location request timed out."
-      default:
-        return "Unknown GPS error occurred."
-    }
-  }
-
-  const sendLocationUpdate = async (locationData) => {
-    if (isSendingLocation) return
-    
-    setIsSendingLocation(true)
-    try {
-      const driverId = localStorage.getItem("driver_id")
-      const payload = {
-        type: "location_update",
-        trip_id: route.route_id,
-        driver_id: driverId,
-        lat: locationData.lat,
-        lng: locationData.lng,
-        accuracy: locationData.accuracy,
-        timestamp: locationData.timestamp,
-      }
-
-      // Simulate API call - replace with actual endpoint
-      console.log("Sending location update:", payload)
-      await new Promise((resolve) => setTimeout(resolve, 500))
-    } catch (err) {
-      console.error("Failed to send location update:", err)
-    } finally {
-      setIsSendingLocation(false)
-    }
-  }
-
-  const sendStudentEvent = async (student, eventType) => {
-    setLoading(true)
-    try {
-      const driverId = localStorage.getItem("driver_id")
-      const payload = {
-        type: "student_event",
-        trip_id: route.route_id,
-        driver_id: driverId,
-        student_id: student.student_id,
-        event: eventType,
-        student_name: student.name,
-        grade: student.grade,
-        stop_name: currentStop.stop_name,
-        timestamp: new Date().toISOString(),
-        location: currentLocation,
-      }
-
-      // Simulate API call - replace with actual endpoint
-      console.log("Sending student event:", payload)
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      
-      // Send final location update when student boards/alights
-      if (currentLocation) {
-        await sendLocationUpdate(currentLocation)
-      }
-    } catch (err) {
-      console.error("Failed to send student event:", err)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleStartTrip = () => {
     setTripStatus("in_progress")
@@ -206,127 +61,40 @@ const ActiveTrip = () => {
 
   const handleArriveAtStop = async () => {
     setLoading(true)
-    // Send arrival event
-    if (currentLocation) {
-      await sendLocationUpdate(currentLocation)
-    }
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 500))
     setLoading(false)
   }
 
-  const handleDepartStop = async () => {
-    setLoading(true)
-    
-    // For morning trips - check if all students boarded
-    if (route.trip_direction === "morning") {
-      const pendingStudents = currentStop.students.filter(
-        (s) => !studentStatus[s.student_id]
-      )
-      if (pendingStudents.length > 0) {
-        const confirm = window.confirm(
-          `${pendingStudents.length} student(s) not marked as picked up. Depart anyway?`
-        )
-        if (!confirm) {
-          setLoading(false)
-          return
-        }
-      }
-    }
-
-    // For afternoon trips - check if all students dropped off
-    if (route.trip_direction === "afternoon") {
-      const pendingStudents = currentStop.students.filter(
-        (s) => !studentStatus[s.student_id]
-      )
-      if (pendingStudents.length > 0) {
-        const confirm = window.confirm(
-          `${pendingStudents.length} student(s) not marked as dropped off. Depart anyway?`
-        )
-        if (!confirm) {
-          setLoading(false)
-          return
-        }
-      }
-    }
-
-    if (currentLocation) {
-      await sendLocationUpdate(currentLocation)
-    }
-
+  const handleDepartStop = () => {
     if (currentStopIndex < route.stops.length - 1) {
       setCurrentStopIndex(currentStopIndex + 1)
-      // Clear student status for next stop
-      setStudentStatus({})
     } else {
       setTripStatus("completed")
     }
-    setLoading(false)
   }
 
-  const toggleStudentStatus = async (student) => {
-    const eventType = route.trip_direction === "morning" 
-      ? "boarded_vehicle" 
-      : "dropped_home"
-    
-    // Toggle status
+  const toggleStudentStatus = (studentId) => {
     setStudentStatus((prev) => ({
       ...prev,
-      [student.student_id]: prev[student.student_id] === eventType ? null : eventType,
+      [studentId]: prev[studentId] === "boarded" ? "absent" : "boarded",
     }))
-
-    // Send event if marking as boarded/dropped
-    if (studentStatus[student.student_id] !== eventType) {
-      await sendStudentEvent(student, eventType)
-    }
   }
 
   const handleReportIssue = async () => {
     if (!issueType) return
 
     setLoading(true)
-    try {
-      const payload = {
-        type: "trip_issue",
-        trip_id: route.route_id,
-        driver_id: localStorage.getItem("driver_id"),
-        issue_type: issueType,
-        notes: issueNotes,
-        timestamp: new Date().toISOString(),
-        location: currentLocation,
-      }
-
-      console.log("Reporting issue:", payload)
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      
-      setShowIssueModal(false)
-      setIssueType("")
-      setIssueNotes("")
-      alert("Issue reported successfully")
-    } catch (err) {
-      console.error("Failed to report issue:", err)
-    } finally {
-      setLoading(false)
-    }
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    setLoading(false)
+    setShowIssueModal(false)
+    setIssueType("")
+    setIssueNotes("")
+    alert("Issue reported successfully")
   }
 
-  const getGpsStatusColor = () => {
-    switch (gpsStatus) {
-      case "active": return "#10b981"
-      case "searching": return "#f59e0b"
-      case "error": return "#ef4444"
-      default: return "#9ca3af"
-    }
-  }
-
-  const getGpsStatusText = () => {
-    switch (gpsStatus) {
-      case "active": return "GPS Active"
-      case "searching": return "Searching GPS..."
-      case "error": return "GPS Error"
-      default: return "GPS Off"
-    }
-  }
-
-  const boardedCount = Object.values(studentStatus).filter((s) => s).length
+  const boardedCount = Object.values(studentStatus).filter((s) => s === "boarded").length
   const totalStudents = currentStop?.students?.length || 0
 
   if (tripStatus === "completed") {
@@ -394,58 +162,8 @@ const ActiveTrip = () => {
           {route.route_name}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.9rem" }}>
-          {route.vehicle} • Stop {currentStopIndex + 1} of {route.stops.length}
+          {route.vehicle} • {currentStopIndex + 1} of {route.stops.length} stops
         </p>
-      </div>
-
-      {/* GPS Status Bar */}
-      <div
-        style={{
-          backgroundColor: "white",
-          borderRadius: "12px",
-          padding: "12px 16px",
-          marginBottom: "20px",
-          border: "1px solid #e5e7eb",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div
-            style={{
-              width: "12px",
-              height: "12px",
-              borderRadius: "50%",
-              backgroundColor: getGpsStatusColor(),
-              animation: gpsStatus === "active" ? "pulse 2s infinite" : "none",
-            }}
-          />
-          <div>
-            <p style={{ margin: 0, fontSize: "0.9rem", fontWeight: 500, color: "#1e293b" }}>
-              {getGpsStatusText()}
-            </p>
-            {locationError && (
-              <p style={{ margin: "2px 0 0", fontSize: "0.75rem", color: "#ef4444" }}>
-                {locationError}
-              </p>
-            )}
-          </div>
-        </div>
-        <div style={{ textAlign: "right" }}>
-          {currentLocation && (
-            <>
-              <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
-                {currentLocation.lat.toFixed(4)}, {currentLocation.lng.toFixed(4)}
-              </p>
-              {gpsAccuracy && (
-                <p style={{ margin: "2px 0 0", fontSize: "0.75rem", color: "#9ca3af" }}>
-                  Accuracy: ±{Math.round(gpsAccuracy)}m
-                </p>
-              )}
-            </>
-          )}
-        </div>
       </div>
 
       {/* Trip Progress */}
@@ -519,8 +237,6 @@ const ActiveTrip = () => {
             Start Time: {route.start_time}
             <br />
             {route.student_count} students assigned
-            <br />
-            Direction: {route.trip_direction === "morning" ? "Home → School" : "School → Home"}
           </p>
           <button
             onClick={handleStartTrip}
@@ -556,9 +272,7 @@ const ActiveTrip = () => {
                 <h3 style={{ margin: "0 0 4px", fontSize: "1.25rem", fontWeight: 700, color: "#1e293b" }}>
                   Stop {currentStop.stop_order}: {currentStop.stop_name}
                 </h3>
-                <p style={{ margin: 0, color: "#64748b" }}>
-                  Scheduled: {currentStop.scheduled_time}
-                </p>
+                <p style={{ margin: 0, color: "#64748b" }}>Scheduled: {currentStop.scheduled_time}</p>
               </div>
               <button
                 onClick={() => setShowIssueModal(true)}
@@ -602,69 +316,46 @@ const ActiveTrip = () => {
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                   <h4 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "#1e293b" }}>
-                    Students ({boardedCount}/{totalStudents} {route.trip_direction === "morning" ? "boarded" : "dropped"})
+                    Students ({boardedCount}/{totalStudents} boarded)
                   </h4>
-                  <button
-                    onClick={() => {
-                      currentStop.students.forEach((student) => {
-                        if (!studentStatus[student.student_id]) {
-                          toggleStudentStatus(student)
-                        }
-                      })
-                    }}
-                    style={{
-                      padding: "6px 12px",
-                      backgroundColor: "#dbeafe",
-                      color: "#1e40af",
-                      border: "none",
-                      borderRadius: "6px",
-                      fontSize: "0.8rem",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Mark All
-                  </button>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  {currentStop.students.map((student) => {
-                    const isBoarded = studentStatus[student.student_id]
-                    return (
+                  {currentStop.students.map((student) => (
+                    <div
+                      key={student.student_id}
+                      onClick={() => toggleStudentStatus(student.student_id)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "14px 16px",
+                        backgroundColor: studentStatus[student.student_id] === "boarded" ? "#dcfce7" : "#f9fafb",
+                        borderRadius: "10px",
+                        cursor: "pointer",
+                        border: `2px solid ${studentStatus[student.student_id] === "boarded" ? "#10b981" : "transparent"}`,
+                      }}
+                    >
+                      <div>
+                        <p style={{ margin: 0, fontWeight: 600, color: "#1e293b" }}>{student.name}</p>
+                        <p style={{ margin: "2px 0 0", fontSize: "0.85rem", color: "#64748b" }}>{student.grade}</p>
+                      </div>
                       <div
-                        key={student.student_id}
-                        onClick={() => toggleStudentStatus(student)}
                         style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "50%",
+                          backgroundColor: studentStatus[student.student_id] === "boarded" ? "#10b981" : "#d1d5db",
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "14px 16px",
-                          backgroundColor: isBoarded ? "#dcfce7" : "#f9fafb",
-                          borderRadius: "10px",
-                          cursor: "pointer",
-                          border: `2px solid ${isBoarded ? "#10b981" : "transparent"}`,
+                          justifyContent: "center",
+                          color: "white",
+                          fontSize: "1rem",
                         }}
                       >
-                        <div>
-                          <p style={{ margin: 0, fontWeight: 600, color: "#1e293b" }}>{student.name}</p>
-                          <p style={{ margin: "2px 0 0", fontSize: "0.85rem", color: "#64748b" }}>{student.grade}</p>
-                        </div>
-                        <div
-                          style={{
-                            width: "32px",
-                            height: "32px",
-                            borderRadius: "50%",
-                            backgroundColor: isBoarded ? "#10b981" : "#d1d5db",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: "white",
-                            fontSize: "1rem",
-                          }}
-                        >
-                          {isBoarded ? "✓" : "○"}
-                        </div>
+                        {studentStatus[student.student_id] === "boarded" ? "✓" : "○"}
                       </div>
-                    )
-                  })}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -847,14 +538,6 @@ const ActiveTrip = () => {
           </div>
         </div>
       )}
-
-      <style>{`
-        @keyframes pulse {
-          0% { opacity: 1; }
-          50% { opacity: 0.5; }
-          100% { opacity: 1; }
-        }
-      `}</style>
     </div>
   )
 }

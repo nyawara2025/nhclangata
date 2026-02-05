@@ -90,11 +90,13 @@ export const API_ENDPOINTS = {
   schoolTransportGetDelays: `${getBaseUrl()}/school-transport/delays`,
 
   // Driver/Vendor Operations
-  schoolTransportDriverLogin: `${getBaseUrl()}/school-transport/driver/login`,
-  schoolTransportDriverDashboard: `${getBaseUrl()}/school-transport/driver/dashboard`,
+  schoolTransportDriverLogin: `${getBaseUrl()}/school-transport/driver-login`,
+  schoolTransportDriverDashboard: `${getBaseUrl()}/school-transport/driver-dashboard`,
   schoolTransportUpdateTripStatus: `${getBaseUrl()}/school-transport/driver/trip-status`,
   schoolTransportUpdateStudentAttendance: `${getBaseUrl()}/school-transport/driver/student-attendance`,
   schoolTransportReportIssue: `${getBaseUrl()}/school-transport/driver/report-issue`,
+  schoolTransportDriverLocation: `${getBaseUrl()}/school-transport/driver-location-update`,
+  schoolTransportStudentEvent: `${getBaseUrl()}/school-transport/driver-record-event`,
 };
 
 // Webhook paths (for reference)
@@ -143,6 +145,8 @@ export const WEBHOOK_PATHS = {
   schoolTransportUpdateTripStatus: "school-transport/driver/trip-status",
   schoolTransportUpdateStudentAttendance: "school-transport/driver/student-attendance",
   schoolTransportReportIssue: "school-transport/driver/report-issue",
+  schoolTransportDriverLocation: "school-transport/driver/location-update",
+  schoolTransportStudentEvent: "school-transport/driver/student-event",
 };
 
 // M-Pesa Configuration

@@ -76,9 +76,25 @@ export const API_ENDPOINTS = {
   // Parent Event Operations
   fundayGetUpcomingEvents: `${getBaseUrl()}/fun-day/events/upcoming`,
   fundayGetEventDetails: `${getBaseUrl()}/fun-day/event-details`,
-  fundayBookEvent: `${getBaseUrl()}/fun-day/events/:id/register`,
-  fundayGetMyRegistrations: `${getBaseUrl()}/fun-day/events/:id/my-registrations`,
+  fundayBookEvent: `${getBaseUrl()}/fun-day/events`,
+  fundayGetMyRegistrations: `${getBaseUrl()}/fun-day/my-registrations`,
   fundayCancelRegistration: `${getBaseUrl()}/fun-day/cancel-registration`,
+
+  // ============================================
+  // School Transport Operations
+  // ============================================
+
+  // Parent Operations
+  schoolTransportGetAssignment: `${getBaseUrl()}/school-transport/my-assignment`,
+  schoolTransportGetTracking: `${getBaseUrl()}/school-transport/tracking-history`,
+  schoolTransportGetDelays: `${getBaseUrl()}/school-transport/delays`,
+
+  // Driver/Vendor Operations
+  schoolTransportDriverLogin: `${getBaseUrl()}/school-transport/driver/login`,
+  schoolTransportDriverDashboard: `${getBaseUrl()}/school-transport/driver/dashboard`,
+  schoolTransportUpdateTripStatus: `${getBaseUrl()}/school-transport/driver/trip-status`,
+  schoolTransportUpdateStudentAttendance: `${getBaseUrl()}/school-transport/driver/student-attendance`,
+  schoolTransportReportIssue: `${getBaseUrl()}/school-transport/driver/report-issue`,
 };
 
 // Webhook paths (for reference)
@@ -114,10 +130,19 @@ export const WEBHOOK_PATHS = {
   fundayGetEventBookings: "vendor/fun-day/events",
   fundayGetVendorStats: "vendor/fun-day/stats",
   fundayGetUpcomingEvents: "fun-day/events/upcoming",
-  fundayGetEventDetails: "fun-day/events",
+  fundayGetEventDetails: "fun-day/event-details",
   fundayBookEvent: "fun-day/events",
   fundayGetMyRegistrations: "fun-day/my-registrations",
   fundayCancelRegistration: "fun-day/cancel-registration",
+  // School Transport Operations
+  schoolTransportGetAssignment: "school-transport/my-assignment",
+  schoolTransportGetTracking: "school-transport/tracking-history",
+  schoolTransportGetDelays: "school-transport/delays",
+  schoolTransportDriverLogin: "school-transport/driver/login",
+  schoolTransportDriverDashboard: "school-transport/driver/dashboard",
+  schoolTransportUpdateTripStatus: "school-transport/driver/trip-status",
+  schoolTransportUpdateStudentAttendance: "school-transport/driver/student-attendance",
+  schoolTransportReportIssue: "school-transport/driver/report-issue",
 };
 
 // M-Pesa Configuration

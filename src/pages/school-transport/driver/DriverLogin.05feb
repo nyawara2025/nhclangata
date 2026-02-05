@@ -1,10 +1,9 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { API_ENDPOINTS } from "../../../config/apiConfig"
 
 const DriverLogin = () => {
   const navigate = useNavigate()
-  const [phone, setPhone] = useState("")
+  const [driverId, setDriverId] = useState("")
   const [pin, setPin] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
@@ -14,51 +13,19 @@ const DriverLogin = () => {
     setLoading(true)
     setError("")
 
-    // Validate input
-    if (!phone || !pin) {
-      setError("Please enter phone number and PIN")
-      setLoading(false)
-      return
-    }
-
-    if (pin.length !== 4) {
-      setError("PIN must be 4 digits")
-      setLoading(false)
-      return
-    }
-
     try {
-      // Make actual API call to n8n webhook
-      const response = await fetch(API_ENDPOINTS.schoolTransportDriverLogin, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phone: phone.trim(),
-          pin: pin.trim(),
-        }),
-      })
+      // Simulate login - replace with actual API call
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      const data = await response.json()
-
-      if (data.success) {
-        // Store authentication data
-        localStorage.setItem("driver_id", data.data.driver.driver_id)
-        localStorage.setItem("driver_name", data.data.driver.name)
-        localStorage.setItem("driver_phone", data.data.driver.phone)
-        localStorage.setItem("driver_routes", JSON.stringify(data.data.routes || []))
-        localStorage.setItem("driver_session_time", data.data.session.authenticated_at)
-        localStorage.setItem("driver_session_expires", data.data.session.expires_at)
-        
-        // Navigate to dashboard
+      if (driverId && pin) {
+        localStorage.setItem("driver_id", driverId)
+        localStorage.setItem("driver_token", "mock-token-" + driverId)
         navigate("/transport-driver/dashboard")
       } else {
-        setError(data.message || "Login failed. Please check your credentials.")
+        setError("Please enter driver ID and PIN")
       }
     } catch (err) {
-      console.error("Login error:", err)
-      setError("Connection error. Please check your network and try again.")
+      setError("Login failed. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -95,13 +62,13 @@ const DriverLogin = () => {
           <label
             style={{ display: "block", marginBottom: "8px", fontWeight: 500, color: "#374151" }}
           >
-            Phone Number
+            Driver ID
           </label>
           <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="+254712345678"
+            type="text"
+            value={driverId}
+            onChange={(e) => setDriverId(e.target.value)}
+            placeholder="Enter your driver ID"
             style={{
               width: "100%",
               padding: "14px 16px",
