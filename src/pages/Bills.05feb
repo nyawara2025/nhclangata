@@ -364,20 +364,6 @@ const Bills = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="manualAmount">Amount Paid (Kshs)</label>
-                <input
-                  type="number"
-                  id="manualAmount"
-                  value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
-                  min="1"
-                  max="100000"
-                  required
-                />
-                <small>Enter the exact amount you sent via M-Pesa</small>
-              </div>
-
-              <div className="form-group">
                 <label htmlFor="transactionCode">M-Pesa Transaction Code</label>
                 <input
                   type="text"
@@ -390,8 +376,8 @@ const Bills = () => {
                 />
               </div>
 
-              <button type="submit" className="btn-primary manual-btn" disabled={processing || formData.amount <= 0}>
-                {processing ? 'Recording...' : `Record Payment of ${formatCurrency(formData.amount)}`}
+              <button type="submit" className="btn-primary manual-btn" disabled={processing}>
+                {processing ? 'Recording...' : 'Record Payment'}
               </button>
             </form>
           )}

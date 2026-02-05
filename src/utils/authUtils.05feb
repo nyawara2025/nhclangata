@@ -35,20 +35,6 @@ export const isAdmin = () => {
 };
 
 /**
- * Check if the current user is a treasurer
- * Supports both 'role' and 'resident_type' fields from database
- * @returns {boolean} True if user is treasurer, false otherwise
- */
-export const isTreasurer = () => {
-  const user = getCurrentUser();
-  if (!user) return false;
-  
-  // Check for 'role' or 'resident_type' property set to 'treasurer'
-  // Also supports 'isTreasurer' boolean flag for flexibility
-  return user.role === 'treasurer' || user.resident_type === 'treasurer' || user.isTreasurer === true;
-};
-
-/**
  * Check if user is authenticated (logged in)
  * @returns {boolean} True if authenticated, false otherwise
  */
@@ -73,7 +59,6 @@ export const getUserDisplayName = () => {
 export default {
   getCurrentUser,
   isAdmin,
-  isTreasurer,
   isAuthenticated,
   getUserDisplayName,
 };

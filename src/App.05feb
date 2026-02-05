@@ -30,7 +30,6 @@ import SchoolTransport from './pages/school-transport/SchoolTransport'
 import DriverLogin from './pages/school-transport/driver/DriverLogin'
 import DriverDashboard from './pages/school-transport/driver/DriverDashboard'
 import ActiveTrip from './pages/school-transport/driver/ActiveTrip'
-import TreasurerDashboard from './pages/TreasurerDashboard'
 
 function App() {
   return (
@@ -142,12 +141,6 @@ function App() {
           <VendorLayout>
             <EventBookings />
           </VendorLayout>
-        } />
-        {/* Treasurer Routes */}
-        <Route path="/treasurer" element={
-          <ProtectedRoute>
-            <TreasurerDashboard />
-          </ProtectedRoute>
         } />
       </Routes>
     </AuthProvider>
