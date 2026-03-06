@@ -5,24 +5,70 @@ import { useAuth } from '../context/AuthContext'
 const Login = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login } = useAuth()
+  const { login } = useAuth() 
+  
+  // State for the flow
   const [phone, setPhone] = useState('')
-  const [apartmentId, setApartmentId] = useState('')
+  const [otp, setOtp] = useState('')
+  const [step, setStep] = useState(1) // 1: Enter Phone, 2: Enter OTP
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const from = location.state?.from?.pathname || '/'
 
-  const handleSubmit = async (e) => {
+  // Step 1: Request OTP from n8n
+  const handleSendOtp = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
     try {
-      await login(phone, apartmentId)
-      navigate(from, { replace: true })
+      const response = await fetch('https://n8n.tenear.com/webhook/nhc-request-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone })
+      })
+
+      if (!response.ok) throw new Error('Failed to send OTP. Please try again.')
+      
+      setStep(2)
     } catch (err) {
-      setError(err.message || 'Login failed. Please try again.')
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Step 2: Verify OTP via n8n and login
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+
+    try {
+      const response = await fetch('https://n8n.tenear.com/webhook/nhc-verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, otp_code: otp })
+      })
+
+      const data = await response.json()
+      console.log('N8N Response Data:', data) // <--- Add this temporarily
+
+
+      // NEW LOGIC: Check if data is an array and has the first resident item
+      if (Array.isArray(data) && data.length > 0) {
+        const residentData = data[0] // Get Eric's data from the array
+      
+        // Pass the resident object to your AuthContext login
+        await login(residentData) 
+        navigate(from, { replace: true })
+      } else {
+        // If n8n returns an empty array or error object
+        throw new Error(data.message || 'Invalid OTP code or user not found.')
+      }
+    } catch (err) {
+      setError(err.message)
     } finally {
       setLoading(false)
     }
@@ -64,11 +110,11 @@ const Login = () => {
             NHC Langata
           </h1>
           <p style={{ margin: 0, color: '#64748b' }}>
-            Resident Login
+            {step === 1 ? 'Resident Login' : 'Verify OTP'}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={step === 1 ? handleSendOtp : handleVerifyOtp}>
           {error && (
             <div style={{
               background: '#fef2f2',
@@ -83,59 +129,80 @@ const Login = () => {
             </div>
           )}
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              color: '#374151'
-            }}>
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+2547XXXXXXXX"
-              required
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                fontSize: '1rem',
-                boxSizing: 'border-box'
-              }}
-            />
-          </div>
-
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              color: '#374151'
-            }}>
-              Apartment ID
-            </label>
-            <input
-              type="text"
-              value={apartmentId}
-              onChange={(e) => setApartmentId(e.target.value)}
-              placeholder="e.g., 1, 2, 3..."
-              required
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                fontSize: '1rem',
-                boxSizing: 'border-box'
-              }}
-            />
-          </div>
+          {step === 1 ? (
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                color: '#374151'
+              }}>
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+2547XXXXXXXX"
+                required
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+          ) : (
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                color: '#374151'
+              }}>
+                Enter 6-Digit Code
+              </label>
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="XXXXXX"
+                maxLength="6"
+                required
+                autoFocus
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  fontSize: '1.25rem',
+                  textAlign: 'center',
+                  letterSpacing: '4px',
+                  boxSizing: 'border-box'
+                }}
+              />
+              <button 
+                type="button" 
+                onClick={() => setStep(1)} 
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#0891B2',
+                  marginTop: '12px',
+                  fontSize: '0.875rem',
+                  cursor: 'pointer',
+                  padding: 0
+                }}
+              >
+                ← Use a different number
+              </button>
+            </div>
+          )}
 
           <button
             type="submit"
@@ -150,10 +217,11 @@ const Login = () => {
               fontSize: '1rem',
               fontWeight: 600,
               cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1
+              opacity: loading ? 0.7 : 1,
+              marginTop: step === 2 ? '12px' : '0'
             }}
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Processing...' : step === 1 ? 'Get OTP' : 'Verify & Sign In'}
           </button>
         </form>
 
@@ -174,6 +242,7 @@ const Login = () => {
           </Link>
         </div>
 
+        {/* Commenting out the Driver Login section temporarily
         <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #e5e7eb', textAlign: 'center' }}>
           <p style={{ margin: '0 0 8px', color: '#64748b', fontSize: '0.875rem' }}>
             Are you a transport driver?
@@ -190,6 +259,7 @@ const Login = () => {
             Driver Login →
           </Link>
         </div>
+        */}
       </div>
 
       <p style={{
@@ -199,7 +269,7 @@ const Login = () => {
         textAlign: 'center'
       }}>
         NHC Langata Residential Complex<br />
-        Property Management System
+        Residents portal
       </p>
     </div>
   )

@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-// Added handleOtpLoginResponse to the imports below
-import { getStoredUser, clearAuthData, STORAGE_KEYS, handleOtpLoginResponse } from '../utils/apiClient'
+import { loginResident, getStoredUser, clearAuthData, STORAGE_KEYS } from '../utils/apiClient'
 
 const AuthContext = createContext(null)
 
@@ -9,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check for stored user on mount to maintain session
+    // Check for stored user on mount
     const storedUser = getStoredUser()
     if (storedUser) {
       setUser(storedUser)
@@ -17,12 +16,11 @@ export const AuthProvider = ({ children }) => {
     setLoading(false)
   }, [])
 
-  // Accepts user object from n8n, formats it, and saves to storage via apiClient
-  const login = async (userData) => {
-    const formattedUser = handleOtpLoginResponse(userData);
-    setUser(formattedUser);
-    return formattedUser;
-  };
+  const login = async (email, password) => {
+    const { user: userData } = await loginResident(email, password)
+    setUser(userData)
+    return userData
+  }
 
   const logout = () => {
     clearAuthData()

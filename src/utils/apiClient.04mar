@@ -3,7 +3,7 @@
 
 import { API_ENDPOINTS } from "../config/apiConfig";
 
-// Storage keys - Kept consistent with your existing logic
+// Storage keys
 export const STORAGE_KEYS = {
   CURRENT_USER: "nhclangata_current_user",
   AUTH_TOKEN: "nhclangata_auth_token",
@@ -12,6 +12,9 @@ export const STORAGE_KEYS = {
 
 /**
  * Generic API request handler
+ * @param {string} url - The API endpoint URL
+ * @param {object} options - Fetch options (method, headers, body, etc.)
+ * @returns {Promise<object>} - Parsed JSON response
  */
 export const apiRequest = async (url, options = {}) => {
   const defaultHeaders = {
@@ -26,8 +29,9 @@ export const apiRequest = async (url, options = {}) => {
     },
   };
 
+  // Add timeout for slow connections
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000);
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
   try {
     const response = await fetch(url, {
@@ -37,13 +41,16 @@ export const apiRequest = async (url, options = {}) => {
 
     clearTimeout(timeoutId);
 
+    // Handle non-200 responses
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || `HTTP Error: ${response.status}`);
     }
 
+    // Parse JSON response
     const text = await response.text();
 
+    // Handle empty responses
     if (!text || text.trim() === "") {
       throw new Error("Empty response from server");
     }
@@ -56,69 +63,60 @@ export const apiRequest = async (url, options = {}) => {
     }
   } catch (error) {
     clearTimeout(timeoutId);
+
+    // Handle specific error types
     if (error.name === "AbortError") {
       throw new Error("Request timed out. Please try again.");
     }
+
     if (error instanceof TypeError && error.message.includes("fetch")) {
       throw new Error("Network error. Please check your connection.");
     }
+
     throw error;
   }
 };
 
 /**
- * Processes and stores user data after OTP verification
- * This replaces the old loginResident logic for the new flow
- * @param {object} response - The user data object from n8n verify-otp
+ * Login resident user via n8n webhook
+ * @param {string} email - Resident email
+ * @param {string} apartmentId - Resident apartment ID
+ * @returns {Promise<object>} - User data and auth token
  */
-export const handleOtpLoginResponse = (userData) => {
-  if (!userData || !userData.id) {
-    throw new Error("Invalid user data provided");
+export const loginResident = async (phone, apartmentId) => {
+  const response = await apiRequest(API_ENDPOINTS.residentLogin, {
+    method: "POST",
+    body: JSON.stringify({
+      phone,
+      identifier: apartmentId,
+    }),
+  });
+
+  // Validate response structure
+  if (!response || !response.id) {
+    throw new Error("Invalid response from server");
   }
 
-  // Map the data to your application's expected structure
-  const formattedUser = {
-    id: userData.id,
-    first_name: userData.first_name,
-    last_name: userData.last_name,
-    email: userData.email,
-    phone: userData.phone,
-    apartment_number: userData.apartment_number || userData.apartment_id,
-    resident_type: userData.resident_type,
-    apartment_number: userData.apartment_number,
-    block_name: userData.block_name,
-    phase_name: userData.phase_name,
+  // Store auth data
+  const userData = {
+    id: response.id,
+    first_name: response.first_name,
+    last_name: response.last_name,
+    email: response.email,
+    phone: response.phone,
+    apartment_id: response.apartment_id,
+    resident_type: response.resident_type,
+    // Apartment details from joined query
+    apartment_number: response.apartment_number,
+    block_name: response.block_name,
+    phase_name: response.phase_name,
   };
 
-  // Store in LocalStorage so the Dashboard can find it
-  localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(formattedUser));
-  localStorage.setItem(STORAGE_KEYS.RESIDENT_ID, userData.id);
+  localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(userData));
+  localStorage.setItem(STORAGE_KEYS.RESIDENT_ID, response.id);
 
-  return formattedUser;
+  return { user: userData, token: response.token || "api_token" };
 };
-
-/**
- * Get stored user from local storage
- */
-export const getStoredUser = () => {
-  const userJson = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
-  if (!userJson) return null;
-  try {
-    return JSON.parse(userJson);
-  } catch (e) {
-    return null;
-  }
-};
-
-/**
- * Clear all auth data
- */
-export const clearAuthData = () => {
-  localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
-  localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
-  localStorage.removeItem(STORAGE_KEYS.RESIDENT_ID);
-};
-
 
 /**
  * Get vacant houses data
@@ -238,10 +236,26 @@ export const getStoredResidentId = () => {
  * Get the stored current user
  * @returns {object|null} - User object or null
  */
+export const getStoredUser = () => {
+  const userJson = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+  if (!userJson) return null;
+
+  try {
+    return JSON.parse(userJson);
+  } catch (e) {
+    console.error("Error parsing stored user:", e);
+    return null;
+  }
+};
 
 /**
  * Clear all auth data (logout)
  */
+export const clearAuthData = () => {
+  localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+  localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+  localStorage.removeItem(STORAGE_KEYS.RESIDENT_ID);
+};
 
 /**
  * Get active shops for Sokoni (Market Place)
@@ -807,6 +821,7 @@ export const getSchoolTransportData = async () => {
 
 export default {
   apiRequest,
+  loginResident,
   getVacantHouses,
   getPaymentHistory,
   initiateSTKPush,
